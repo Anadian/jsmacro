@@ -1,6 +1,6 @@
 #!/usr/local/bin/node || /usr/bin/env node
 /**
-*	@file jsmacro/main.js
+*	@file jsmacro/source/smain.js
 *	@brief A simple, progressive macro expansions engine written in nodejs.
 *	@author Anadian
 *	@license MIT License:
@@ -21,13 +21,19 @@ CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFT
 OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
+//Internal
+const Log = require('./log.js');
+//Standard
 const FileSystem = require('fs');
 const Path = require('path');
+const Utility = require('utility');
+//External
 const CommandLineArgs = require('command-line-args');
 const CommandLineUsage = require('command-line-usage');
 
 const OptionDefinitions = [
 	{name: 'help', alias: 'h', type: Boolean, description: 'Display this help text.'},
+	{name: 'version', alias: 'V', type: Boolean, description: 'Display version information and exit.'},
 	{name: 'input', alias: 'I', type: String, description: 'File to process.'},
 	{name: 'rules', alias: 'R', type: String, description: 'File to read text-transformation rules from.'},
 	{name: 'output', alias: 'O', type: String, description: 'File to write processed output to.'},
@@ -37,6 +43,7 @@ const OptionDefinitions = [
 const Options = CommandLineArgs(OptionDefinitions);
 
 function ParseRules(rules_file){
+	var _return = [0,null];
 	var rules_map = new Map();
 	var rules_string = FileSystem.readFileSync(rules_file,'utf8');
 	var rules_strings = rules_string.split('\n');
@@ -64,10 +71,9 @@ function ParseRules(rules_file){
 	}
 	return rules_map;
 }
-			
 
 function ParseInput(input_file,rules_map){
-	var _return = null;
+	var _return = [0,null];
 	var input_string = FileSystem.readFileSync(input,'utf8');
 	var input_strings = input_string.split('\n');
 	if(input_strings != null){
@@ -108,4 +114,18 @@ function ParseInput(input_file,rules_map){
 		console.error(error_message);
 		_return = [0,error_message];
 	}
+	return _return;
 }
+
+function main(){
+	if(Options.rules != null){
+		var ParseRules_return = ParseRules(Options.rules);
+		if(ParseRules_return[0] === 1){
+			var rules = ParseRules_return[1];
+			if(Options.input != null && Options.output != null){
+				var ParseInput_return = ParseInput(Options.input, rules);
+				if(ParseInput_return[0] === 1){
+					var output = ParseInput_return[1];
+					FileSystem.writeFileSync(Options.output, output);
+				} else{
+					
