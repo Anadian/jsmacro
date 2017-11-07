@@ -35,15 +35,15 @@ const OptionDefinitions = [
 	{name: 'fail', alias: 'F', type: Boolean, description: 'Abort theatrically at the first sign of something being wrong.'},
 	{name: 'help', alias: 'h', type: Boolean, description: 'Display this help text.'},
 	{name: 'input', alias: 'I', type: String, description: 'File to process.'},
-	{name: 'log', alias: 'l', type: String, description: 'Log to the specified file instead of the default.'}
+	{name: 'log', alias: 'l', type: String, description: 'Log to the specified file instead of the default.'},
 	{name: 'output', alias: 'O', type: String, description: 'File to write processed output to.'},
 	{name: 'quiet', alias: 'q', type: Boolean, description: 'Only log errors.'},
 	{name: 'rules', alias: 'R', type: String, description: 'File to read text-transformation rules from.'},
 	{name: 'silent', alias: 's', type: Boolean, description: 'Silence all logging.'},
 	{name: 'stdin', alias: 'i', type: Boolean, description: 'Read from stdin instead of the input file.'},
-	{name: 'stdout', alias: 'o' type: Boolean, description: 'Print to stdout instead of the specified output file.'},
-	{name: 'verbose', alias: 'v', type: Boolean, description: 'Enable more verbose logging.'}
-	{name: 'version', alias: 'V', type: Boolean, description: 'Display version information and exit.'},
+	{name: 'stdout', alias: 'o', type: Boolean, description: 'Print to stdout instead of the specified output file.'},
+	{name: 'verbose', alias: 'v', type: Boolean, description: 'Enable more verbose logging.'},
+	{name: 'version', alias: 'V', type: Boolean, description: 'Display version information and exit.'}
 ];
 
 const Options = CommandLineArgs(OptionDefinitions);
@@ -56,6 +56,7 @@ function ParseRules(rules_file){
 	Log.log(process.argv0,'jsmacro',Path.basename(__filename),'ParseRules','debug',Utility.format(rules_strings));
 	if(rules_strings != null){
 		for(var i = 0; i < rules_strings.length; i++){
+			Log.log(process.argv0,'jsmacro',Path.basename(__filename),'ParseRules','debug',Utility.format('i: %d length: %d', i, rules_strings.length));
 			var matches = rules_strings[i].match(/^\$(\w*)=\/(.*)\/\[(\d)\]$/);
 			if(matches != null){
 				var number = parseInt(matches[3],10);
